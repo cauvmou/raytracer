@@ -4,20 +4,22 @@ pub type Scene = Vec<Box<dyn Surface>>;
 
 pub trait Surface {
 
-    fn hit(&self, ray: &Ray, scene: &Scene, bounce_count: usize) -> Option<HitInfo> {
-        match self.surface_hit(ray) {
+    fn hit(&self, ray: &Ray, scene: &Scene, bounce_count: usize, min_distance: f64) -> Option<HitInfo> {
+        match self.surface_hit(ray, min_distance) {
             Some(hit) => {
-                return self.get_material().calc_mat(hit, scene, bounce_count)
+                if (hit - ray.origin).mag() < min_distance {
+                    self.get_material().calc_mat(hit, scene, bounce_count)
+                } else {
+                    None
+                }
             },
-            None => {
-                None
-            },
+            None => None,
         }
     }
 
     fn get_material(&self) -> &Box<dyn Material>;
 
-    fn surface_hit(&self, ray: &Ray) -> Option<Vec3>;
+    fn surface_hit(&self, ray: &Ray, min_distance: f64) -> Option<Vec3>;
 }
 
 pub struct HitInfo {

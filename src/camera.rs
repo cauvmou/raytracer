@@ -9,7 +9,6 @@ pub struct Camera {
     look_at: Vec3,
     screen_dist: f64,
     up: Vec3,
-    scene: Scene,
 
     u: Vec3,
     v: Vec3,
@@ -27,18 +26,17 @@ impl Camera {
             look_at,
             screen_dist,
             up,
-            scene: Vec::new(),
             u, v, w
         }
     }
 
     fn pixel_to_ray(&self, x: usize, y: usize, screen: &Screen) -> Ray {
-        let factor_u = (x as f64 + 0.5) * (screen.real.0 / screen.width as f64) - 0.5 * screen.real.0;
-        let factor_v = 0.5 * screen.real.1 - (y as f64 + 0.5) * (screen.real.1 / screen.height as f64); 
+        let factor_u = (x as f64 + 0.5) * (screen.real.0 / (screen.width as f64)) - 0.5 * screen.real.0;
+        let factor_v = 0.5 * screen.real.1 - (y as f64 + 0.5) * (screen.real.1 / (screen.height as f64)); 
 
         Ray {
             origin: self.eye,
-            direction: Vec3::liniear_combine(
+            direction: Vec3::linear_combine(
                 factor_u, &self.u, 
                 factor_v, &self.v, 
                 -self.screen_dist, &self.w
@@ -49,11 +47,16 @@ impl Camera {
     pub fn render_scene(&self, scene: &Scene, mut screen: Screen) -> Screen {
         for (x,y) in screen.clone().into_iter() {
             let ray = self.pixel_to_ray(x, y, &screen);
+            //println!("Ray: {:?}", ray);
+            let mut min_distance = f64::INFINITY;
+
             for surface in scene {
-                if let Some(info) = surface.hit(&ray, scene, 10) {
+                if let Some(info) = surface.hit(&ray, scene, 10, min_distance) {
+                    min_distance = (info.position - self.eye).mag();
                     screen.pixels[x][y] = info.to_color_rgb();
                 }
             }
+
         }
         screen
     }

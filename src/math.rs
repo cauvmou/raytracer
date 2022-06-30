@@ -13,12 +13,17 @@ impl Vec3 {
     }
 
     pub fn normalize(self) -> Self {
-        let n = (self.x.powi(2) + self.y.powi(2) + self.z.powi(2)).sqrt();
-        Self { x: self.x/n, y: self.y/n, z: self.x/n }
+        let n = 1.0 / self.mag();
+        self * n
+        
     }
 
     fn dot(self, other: Self) -> f64 {
         self.x * other.x + self.y * other.y + self.z + other.z
+    }
+
+    pub fn mag(&self) -> f64 {
+        (self.x.powi(2) + self.y.powi(2) + self.z.powi(2)).sqrt()
     }
 
     pub fn cross(self, other: Self) -> Self {
@@ -29,7 +34,7 @@ impl Vec3 {
         }
     }
 
-    pub fn liniear_combine(
+    pub fn linear_combine(
         a: f64, vec_a: &Vec3,
         b: f64, vec_b: &Vec3,
         c: f64, vec_c: &Vec3,        
@@ -105,6 +110,7 @@ impl From<(f64, f64, f64)> for Vec3 {
     }
 }
 
+#[derive(Debug)]
 pub struct Ray {
     pub origin: Vec3,
     pub direction: Vec3,

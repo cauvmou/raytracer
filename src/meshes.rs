@@ -6,18 +6,24 @@ pub struct Plane {
     pub normal: Vec3,
 }
 
+impl Plane {
+    pub fn new(material: Box<dyn Material>, point: Vec3, normal: Vec3) -> Self {
+        Self { material, point, normal: normal.normalize() }
+    }
+}
+
 impl Surface for Plane {
     fn get_material(&self) -> &Box<dyn crate::materials::Material> {
         &self.material
     }
 
-    fn surface_hit(&self, ray: &crate::math::Ray) -> Option<crate::math::Vec3> {
-        let dn = ray.origin * self.normal;
+    fn surface_hit(&self, ray: &crate::math::Ray, min_distance: f64) -> Option<crate::math::Vec3> {
+        let dn = ray.direction * self.normal;
 
         if dn != 0.0 {
             let t = (self.point - ray.origin) * self.normal / dn;
 
-            if t > 0.0 {
+            if t > 0.0 && t < min_distance {
                 return Some(ray.origin + ray.direction * t)
             }
         }
