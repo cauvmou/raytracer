@@ -25,7 +25,7 @@ impl Camera {
             eye,
             look_at,
             screen_dist,
-            up,
+            up: up.normalize(),
             u, v, w
         }
     }

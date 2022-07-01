@@ -15,15 +15,14 @@ impl Vec3 {
     pub fn normalize(self) -> Self {
         let n = 1.0 / self.mag();
         self * n
-        
     }
 
     fn dot(self, other: Self) -> f64 {
-        self.x * other.x + self.y * other.y + self.z + other.z
+        self.x * other.x + self.y * other.y + self.z * other.z
     }
 
     pub fn mag(&self) -> f64 {
-        (self.x.powi(2) + self.y.powi(2) + self.z.powi(2)).sqrt()
+        (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
     }
 
     pub fn cross(self, other: Self) -> Self {

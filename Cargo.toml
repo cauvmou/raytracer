@@ -3,7 +3,11 @@ name = "raytracer"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 image = "*"
+
+[[example]]
+name = "01camera_and_planes"
+
+[[example]]
+name = "02camera_and_spheres"
