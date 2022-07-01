@@ -1,6 +1,4 @@
-use std::mem::Discriminant;
-
-use crate::{surface::Surface, materials::Material, math::Vec3};
+use crate::{surface::Surface, materials::Material, math::{Vec3, self}, light::EPSILON};
 
 pub struct Plane {
     pub material: Box<dyn Material>,
@@ -25,11 +23,28 @@ impl Surface for Plane {
         if dn != 0.0 {
             let t = (self.point - ray.origin) * self.normal / dn;
 
-            if t > 0.0 && t < min_distance {
+            if t > EPSILON && t < min_distance {
                 return Some(ray.origin + ray.direction * t)
             }
         }
         None
+    }
+
+    fn get_normal(&self, hit: &Vec3) -> Vec3 {
+        self.normal
+    }
+
+    fn shadow_hit(&self, ray: &math::Ray) -> bool {
+        let dn = ray.direction * self.normal;
+
+        if dn != 0.0 {
+            let t = (self.point - ray.origin) * self.normal / dn;
+
+            if t > EPSILON {
+                return true
+            }
+        }
+        false
     }
 }
 
@@ -53,10 +68,10 @@ impl Surface for Sphere {
     fn surface_hit(&self, ray: &crate::math::Ray, min_distance: f64) -> Option<Vec3> {
         let aux = ray.origin - self.origin;
 
-        let d_sqr = ray.direction.mag() * ray.direction.mag();
+        let d_sqr = ray.direction.mag2();
 
         let p_half = aux * ray.direction / d_sqr;
-        let q = (aux.mag() * aux.mag() - self.radius * self.radius) / d_sqr;
+        let q = (aux.mag2() - self.radius * self.radius) / d_sqr;
 
         let discriminant = p_half * p_half - q;
 
@@ -65,10 +80,10 @@ impl Surface for Sphere {
 
             let mut t = -p_half - sqrt_discriminant;
 
-            if !(t > 0.0 && t < min_distance) {
+            if !(t > EPSILON && t < min_distance) {
                 t = -p_half + sqrt_discriminant;
 
-                if !(t > 0.0 && t < min_distance) {
+                if !(t > EPSILON && t < min_distance) {
                     return None
                 }
             }
@@ -77,5 +92,38 @@ impl Surface for Sphere {
         }
 
         None
+    }
+
+    fn get_normal(&self, hit: &Vec3) -> Vec3 {
+        (*hit - self.origin).normalize()
+    }
+
+    fn shadow_hit(&self, ray: &math::Ray) -> bool {
+        let aux = ray.origin - self.origin;
+
+        let inv_d_sqr = 1.0 / (ray.direction.mag2());
+
+        let p_half = aux * ray.direction * inv_d_sqr;
+        let q = (aux.mag2() - self.radius * self.radius) * inv_d_sqr;
+
+        let discriminant = p_half * p_half - q;
+
+        if discriminant >= 0.0 {
+            let sqrt_discriminant = discriminant.sqrt();
+
+            let mut t = -p_half - sqrt_discriminant;
+
+            if !(t > EPSILON) {
+                t = -p_half + sqrt_discriminant;
+
+                if !(t > EPSILON) {
+                    return false
+                }
+            }
+
+            return true
+        }
+
+        false
     }
 }

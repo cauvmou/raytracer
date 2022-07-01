@@ -1,14 +1,15 @@
-use raytracer::{camera::{Camera, Screen}, surface::Scene, meshes::{Plane, Sphere}, materials::AlbedoMaterial};
+use raytracer::{camera::{Camera, Screen}, surface::Scene, meshes::{Plane, Sphere}, materials::AlbedoMaterial, light::{SceneLights, DirectionalLight}};
 
 fn main() {
     let camera = Camera::new(
-        (100.0, 0.0, 2.0).into(),
-        (0.0, 0.0, 2.0).into(),
+        (100.0, 0.0, 50.0).into(),
+        (0.0, 0.0, 5.0).into(),
         20.0,
         (0.0, 0.0, 1.0).into()
     );
 
     let mut scene: Scene = Vec::new();
+    let mut lights: SceneLights = Vec::new();
 
     scene.push(Box::new(Plane::new(
         Box::new(AlbedoMaterial::new(0, 0, 255)),
@@ -31,9 +32,12 @@ fn main() {
         (-5.0, 0.0, 6.5).into(),
         3.0,
     )));
+
+    lights.push(Box::new(DirectionalLight::new((1.0, 1.0, 1.0).into())));
+    lights.push(Box::new(DirectionalLight::new((1.0, -1.0, 1.0).into())));
     
     let mut screen = Screen::new(640, 480, 4.0, 3.0);
 
-    screen = camera.render_scene(&scene, screen);
+    screen = camera.render_scene(&scene, Some(&lights), screen);
     screen.export("./out.png").expect("Failed to save image.");
 }

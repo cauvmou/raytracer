@@ -2,7 +2,7 @@ use std::{path::Iter, io};
 
 use image::{ImageFormat, Rgb, ImageError};
 
-use crate::{math::{Vec3, Ray}, surface::{Surface, Scene}};
+use crate::{math::{Vec3, Ray}, surface::{Surface, Scene, HitInfo}, light::SceneLights};
 
 pub struct Camera {
     eye: Vec3,
@@ -44,19 +44,48 @@ impl Camera {
         }
     }
 
-    pub fn render_scene(&self, scene: &Scene, mut screen: Screen) -> Screen {
+    pub fn trace(&self, ray: Ray, scene: &Scene, bounce_count: usize) -> Option<HitInfo> {
+        let mut min_distance = f64::INFINITY;
+        let mut result: Option<HitInfo> = None;
+
+        for surface in scene {
+            if let Some(info) = surface.hit(&ray, scene, bounce_count, min_distance) {
+                min_distance = (info.position - self.eye).mag();
+                result = Some(info);
+            }
+        }
+
+        result
+    }
+
+    pub fn trace_shadow(&self, ray: &Ray, scene: &Scene) -> bool {
+        for surface in scene {
+            if surface.shadow_hit(ray) {
+                return true
+            }
+        }
+        false
+    }
+
+    pub fn light(&self, info: &HitInfo, lights: Option<&SceneLights>, scene: &Scene) -> [u8; 3] {
+        if let Some(lights) = lights {
+            for light in lights {
+                let ray = Ray { origin: info.position, direction: light.direction(&info) };
+                if self.trace_shadow(&ray, &scene) {
+                    return [0, 0, 0]
+                }
+            }
+        }
+        info.to_color_rgb()
+    }
+
+    pub fn render_scene(&self, scene: &Scene, lights: Option<&SceneLights>, mut screen: Screen) -> Screen {
         for (x,y) in screen.clone().into_iter() {
             let ray = self.pixel_to_ray(x, y, &screen);
             //println!("Ray: {:?}", ray);
-            let mut min_distance = f64::INFINITY;
-
-            for surface in scene {
-                if let Some(info) = surface.hit(&ray, scene, 10, min_distance) {
-                    min_distance = (info.position - self.eye).mag();
-                    screen.pixels[x][y] = info.to_color_rgb();
-                }
+            if let Some(result) = self.trace(ray, &scene, 10) {
+                screen.pixels[x][y] = self.light(&result, lights, scene);
             }
-
         }
         screen
     }

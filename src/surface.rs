@@ -17,9 +17,17 @@ pub trait Surface {
         }
     }
 
+    fn shadow(&self, ray: &Ray) -> bool {
+        self.shadow_hit(ray)
+    }
+
+    fn get_normal(&self, hit: &Vec3) -> Vec3;
+
     fn get_material(&self) -> &Box<dyn Material>;
 
     fn surface_hit(&self, ray: &Ray, min_distance: f64) -> Option<Vec3>;
+
+    fn shadow_hit(&self, ray: &Ray) -> bool;
 }
 
 pub struct HitInfo {

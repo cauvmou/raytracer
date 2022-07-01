@@ -21,8 +21,12 @@ impl Vec3 {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
 
+    pub fn mag2(&self) -> f64 {
+        self.x * self.x + self.y * self.y + self.z * self.z
+    }
+
     pub fn mag(&self) -> f64 {
-        (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
+        self.mag2().sqrt()
     }
 
     pub fn cross(self, other: Self) -> Self {

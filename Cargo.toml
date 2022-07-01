@@ -7,7 +7,10 @@ edition = "2021"
 image = "*"
 
 [[example]]
-name = "01camera_and_planes"
+name = "01planes"
 
 [[example]]
-name = "02camera_and_spheres"
+name = "02spheres"
+
+[[example]]
+name = "03lights"
