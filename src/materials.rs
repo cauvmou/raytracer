@@ -134,3 +134,71 @@ impl Material for SDMaterial {
         Some(HitInfo::new(hit_position, hit_normal).tint(color))
     }
 }
+
+pub struct SDRMaterial {
+    color: Color,
+    diffuse_coeff: f64,
+    specular_coeff: f64,
+    exponent: f64,
+    reflection_coeff: f64,
+}
+
+impl SDRMaterial {
+    pub fn new(color: Color, diffuse_coeff: f64, specular_coeff: f64, exponent: f64, reflection_coeff: f64) -> Self {
+        Self { 
+            color,
+            diffuse_coeff,
+            specular_coeff,
+            exponent,
+            reflection_coeff,
+        }
+    }
+}
+
+impl Material for SDRMaterial {
+    fn calc_mat(&self, prev_ray: &Ray, hit_position: Vec3, hit_normal: Vec3, scene: &Scene, lights: Option<&SceneLights>, bounce_count: usize) -> Option<HitInfo> {
+        let mut color: Color = [0, 0, 0].into();
+
+        let mut reflection_dir = hit_normal;
+        reflection_dir *= -2.0 * (prev_ray.direction * hit_normal);
+        reflection_dir += prev_ray.direction;
+        reflection_dir = reflection_dir.normalize();
+
+        if let Some(lights) = lights {
+            for light in lights {
+                let dir = light.direction(hit_position);
+
+                let normal_dot_light = hit_normal * dir;
+
+                if normal_dot_light > 0.0 && !self.trace_shadow(
+                    &Ray::new(hit_position, dir), scene, light.dist_to(hit_position)
+                ) {
+                    let diffusion = self.diffuse_coeff * normal_dot_light * INV_PI;
+                    color = color + self.color * light.color(hit_position, hit_normal) * diffusion;
+
+                    let reflection_dot_ray = -(reflection_dir * prev_ray.direction);
+                    if reflection_dot_ray > 0.0 {
+                        let spec = self.specular_coeff * normal_dot_light * reflection_dot_ray.powf(self.exponent);
+                        color = color + light.color(hit_position, hit_normal) * spec;
+                    }
+                }
+            }
+        } else {
+            color = self.color;
+        }
+
+        let reflection_ray = Ray::new(hit_position, reflection_dir);
+        let mut min_distance = f64::INFINITY;
+        let mut result: Color = 0.into();
+        for surface in scene {
+            if let Some(info) = surface.hit(&reflection_ray, scene, lights, bounce_count, min_distance) {
+                min_distance = (info.position - hit_position).mag();
+                result = info.color();
+            }
+        }
+
+        color = color + result * self.reflection_coeff;
+
+        Some(HitInfo::new(hit_position, hit_normal).tint(color))
+    }
+}

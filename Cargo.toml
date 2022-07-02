@@ -23,3 +23,6 @@ name = "05diffuse"
 
 [[example]]
 name = "06specular"
+
+[[example]]
+name = "07reflection"
