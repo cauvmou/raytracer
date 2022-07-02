@@ -34,13 +34,13 @@ impl Surface for Plane {
         self.normal
     }
 
-    fn shadow_hit(&self, ray: &math::Ray) -> bool {
+    fn shadow_hit(&self, ray: &math::Ray, light_dist: f64) -> bool {
         let dn = ray.direction * self.normal;
 
         if dn != 0.0 {
             let t = (self.point - ray.origin) * self.normal / dn;
 
-            if t > EPSILON {
+            if t > EPSILON && t < light_dist {
                 return true
             }
         }
@@ -98,7 +98,7 @@ impl Surface for Sphere {
         (*hit - self.origin).normalize()
     }
 
-    fn shadow_hit(&self, ray: &math::Ray) -> bool {
+    fn shadow_hit(&self, ray: &math::Ray, light_dist: f64) -> bool {
         let aux = ray.origin - self.origin;
 
         let inv_d_sqr = 1.0 / (ray.direction.mag2());
@@ -113,10 +113,10 @@ impl Surface for Sphere {
 
             let mut t = -p_half - sqrt_discriminant;
 
-            if !(t > EPSILON) {
+            if !(t > EPSILON && t < light_dist) {
                 t = -p_half + sqrt_discriminant;
 
-                if !(t > EPSILON) {
+                if !(t > EPSILON && t < light_dist) {
                     return false
                 }
             }

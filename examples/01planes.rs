@@ -11,13 +11,13 @@ fn main() {
     let mut scene: Scene = Vec::new();
 
     scene.push(Box::new(Plane::new(
-        Box::new(AlbedoMaterial::new(0, 150, 255)),
+        Box::new(AlbedoMaterial::new([0, 150, 255].into())),
         (0.0, 0.0, 0.0).into(),
         (0.0, 1.0, 2.0).into(),
     )));
 
     scene.push(Box::new(Plane::new(
-        Box::new(AlbedoMaterial::new(255, 0, 0)),
+        Box::new(AlbedoMaterial::new([255, 0, 0].into())),
         (0.0, 0.0, -2.0).into(),
         (0.0, -1.0, 1.0).into(),
     )));
