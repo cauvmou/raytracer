@@ -1,7 +1,7 @@
 use crate::{math::{Vec3, Ray}, surface::{Scene, HitInfo}, color::Color, light::SceneLights, INV_PI};
 
 pub trait Material {
-    fn calc_mat(&self, hit_position: Vec3, hit_normal: Vec3, scene: &Scene, lights: Option<&SceneLights>, bounce_count: usize) -> Option<HitInfo>;
+    fn calc_mat(&self, prev_ray: &Ray, hit_position: Vec3, hit_normal: Vec3, scene: &Scene, lights: Option<&SceneLights>, bounce_count: usize) -> Option<HitInfo>;
 
     fn trace_shadow(&self, ray: &Ray, scene: &Scene, light_dist: f64) -> bool {
         for surface in scene {
@@ -24,7 +24,7 @@ impl AlbedoMaterial {
 }
 
 impl Material for AlbedoMaterial {
-    fn calc_mat(&self, hit_position: Vec3, hit_normal: Vec3, scene: &Scene, lights: Option<&SceneLights>, bounce_count: usize) -> Option<HitInfo> {
+    fn calc_mat(&self, prev_ray: &Ray, hit_position: Vec3, hit_normal: Vec3, scene: &Scene, lights: Option<&SceneLights>, bounce_count: usize) -> Option<HitInfo> {
         if let Some(lights) = lights {
             let mut color = self.color;
             for light in lights {
@@ -44,20 +44,20 @@ impl Material for AlbedoMaterial {
 
 pub struct DiffuseMaterial {
     color: Color,
-    diffusion: f64,
+    diffuse_coeff: f64,
 }
 
 impl DiffuseMaterial {
-    pub fn new(color: Color, diffusion: f64,) -> Self {
+    pub fn new(color: Color, diffuse_coeff: f64) -> Self {
         Self { 
             color,
-            diffusion,
+            diffuse_coeff,
         }
     }
 }
 
 impl Material for DiffuseMaterial {
-    fn calc_mat(&self, hit_position: Vec3, hit_normal: Vec3, scene: &Scene, lights: Option<&SceneLights>, bounce_count: usize) -> Option<HitInfo> {
+    fn calc_mat(&self, prev_ray: &Ray, hit_position: Vec3, hit_normal: Vec3, scene: &Scene, lights: Option<&SceneLights>, bounce_count: usize) -> Option<HitInfo> {
         let mut color: Color = 0.into();
 
         if let Some(lights) = lights {
@@ -69,8 +69,62 @@ impl Material for DiffuseMaterial {
                 if normal_dot_light > 0.0 && !self.trace_shadow(
                     &Ray::new(hit_position, dir), scene, light.dist_to(hit_position)
                 ) {
-                    let diffusion = self.diffusion * normal_dot_light * INV_PI;
+                    let diffusion = self.diffuse_coeff * normal_dot_light * INV_PI;
                     color = color + self.color * light.color(hit_position, hit_normal) * diffusion;
+                }
+            }
+        } else {
+            color = self.color;
+        }
+
+        Some(HitInfo::new(hit_position, hit_normal).tint(color))
+    }
+}
+
+pub struct SDMaterial {
+    color: Color,
+    diffuse_coeff: f64,
+    specular_coeff: f64,
+    exponent: f64,
+}
+
+impl SDMaterial {
+    pub fn new(color: Color, diffuse_coeff: f64, specular_coeff: f64, exponent: f64) -> Self {
+        Self { 
+            color,
+            diffuse_coeff,
+            specular_coeff,
+            exponent,
+        }
+    }
+}
+
+impl Material for SDMaterial {
+    fn calc_mat(&self, prev_ray: &Ray, hit_position: Vec3, hit_normal: Vec3, scene: &Scene, lights: Option<&SceneLights>, bounce_count: usize) -> Option<HitInfo> {
+        let mut color: Color = [0, 0, 0].into();
+
+        let mut reflection_dir = hit_normal;
+        reflection_dir *= -2.0 * (prev_ray.direction * hit_normal);
+        reflection_dir += prev_ray.direction;
+        reflection_dir = reflection_dir.normalize();
+
+        if let Some(lights) = lights {
+            for light in lights {
+                let dir = light.direction(hit_position);
+
+                let normal_dot_light = hit_normal * dir;
+
+                if normal_dot_light > 0.0 && !self.trace_shadow(
+                    &Ray::new(hit_position, dir), scene, light.dist_to(hit_position)
+                ) {
+                    let diffusion = self.diffuse_coeff * normal_dot_light * INV_PI;
+                    color = color + self.color * light.color(hit_position, hit_normal) * diffusion;
+
+                    let reflection_dot_ray = -(reflection_dir * prev_ray.direction);
+                    if reflection_dot_ray > 0.0 {
+                        let spec = self.specular_coeff * normal_dot_light * reflection_dot_ray.powf(self.exponent);
+                        color = color + light.color(hit_position, hit_normal) * spec;
+                    }
                 }
             }
         } else {

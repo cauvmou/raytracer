@@ -1,4 +1,4 @@
-use std::ops::{Add, Mul, Div, Sub};
+use std::ops::{Add, Mul, Div, Sub, MulAssign, AddAssign, Neg};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Vec3 {
@@ -94,6 +94,29 @@ impl Mul<f64> for Vec3 {
     }
 }
 
+impl MulAssign<f64> for Vec3 {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.x = self.x * rhs;
+        self.y = self.y * rhs;
+        self.z = self.z * rhs;
+    }
+}
+
+impl AddAssign<Vec3> for Vec3 {
+    fn add_assign(&mut self, rhs: Vec3) {
+        self.x = self.x + rhs.x;
+        self.y = self.y + rhs.y;
+        self.z = self.z + rhs.z;
+    }
+}
+
+impl Neg for Vec3 {
+    type Output = Vec3;
+
+    fn neg(self) -> Self::Output {
+        Vec3::new(-self.x, -self.y, -self.z)
+    }
+}
 
 impl Div<f64> for Vec3 {
     type Output = Vec3;

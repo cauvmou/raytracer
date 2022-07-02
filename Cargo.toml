@@ -17,3 +17,9 @@ name = "03lights"
 
 [[example]]
 name = "04pointlights"
+
+[[example]]
+name = "05diffuse"
+
+[[example]]
+name = "06specular"

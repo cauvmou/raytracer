@@ -1,4 +1,4 @@
-use crate::{surface::HitInfo, math::Vec3, color::Color};
+use crate::{math::Vec3, color::Color};
 
 pub type SceneLights = Vec<Box<dyn Light>>;
 pub static EPSILON: f64 = 0.02;

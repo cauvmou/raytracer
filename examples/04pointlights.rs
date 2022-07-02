@@ -1,4 +1,4 @@
-use raytracer::{camera::{Camera, Screen}, surface::Scene, meshes::{Plane, Sphere}, materials::AlbedoMaterial, light::{SceneLights, DirectionalLight, PointLight}};
+use raytracer::{camera::{Camera, Screen}, surface::Scene, meshes::{Plane, Sphere}, materials::AlbedoMaterial, light::{SceneLights, PointLight}};
 
 fn main() {
     let camera = Camera::new(

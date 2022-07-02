@@ -1,8 +1,6 @@
-use std::{path::Iter, io};
+use image::{ImageFormat, ImageError};
 
-use image::{ImageFormat, Rgb, ImageError};
-
-use crate::{math::{Vec3, Ray}, surface::{Surface, Scene, HitInfo}, light::SceneLights, color::Color};
+use crate::{math::{Vec3, Ray}, surface::{Scene}, light::SceneLights, color::Color};
 
 pub struct Camera {
     eye: Vec3,
@@ -34,14 +32,14 @@ impl Camera {
         let factor_u = (x as f64 + 0.5) * (screen.real.0 / (screen.width as f64)) - 0.5 * screen.real.0;
         let factor_v = 0.5 * screen.real.1 - (y as f64 + 0.5) * (screen.real.1 / (screen.height as f64)); 
 
-        Ray {
-            origin: self.eye,
-            direction: Vec3::linear_combine(
+        Ray::new(
+            self.eye,
+            Vec3::linear_combine(
                 factor_u, &self.u, 
                 factor_v, &self.v, 
                 -self.screen_dist, &self.w
-            ),
-        }
+            )
+        )
     }
 
     pub fn trace(&self, ray: Ray, scene: &Scene, lights: Option<&SceneLights>, bounce_count: usize) -> [u8; 3] {
@@ -87,15 +85,15 @@ pub struct Screen {
 }
 
 impl Screen {
-    pub fn new(width: usize, height: usize, realWidth: f64, realHeight: f64) -> Self {
-        Self { real: (realWidth, realHeight), width, height, pixels: Self::init_screen(width, height), current: (0, 0) }
+    pub fn new(width: usize, height: usize, real_width: f64, real_height: f64) -> Self {
+        Self { real: (real_width, real_height), width, height, pixels: Self::init_screen(width, height), current: (0, 0) }
     }
 
     fn init_screen(width: usize, height: usize) -> Vec<Vec<[u8; 3]>> {
         let mut res = Vec::with_capacity(width);
         for x in 0..width {
             res.push(Vec::with_capacity(height));
-            for y in 0..height {
+            for _ in 0..height {
                 res[x].push([0, 0, 0])
             }
         }
