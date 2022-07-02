@@ -4,7 +4,7 @@ pub type SceneLights = Vec<Box<dyn Light>>;
 pub static EPSILON: f64 = 0.02;
 
 pub trait Light {
-    fn direction(&self, hit: Vec3) -> Vec3;
+    fn direction(&self, hit: Vec3, normal: Vec3) -> Vec3;
 
     fn dist_to(&self, point: Vec3) -> f64;
 
@@ -26,8 +26,34 @@ impl DirectionalLight {
 }
 
 impl Light for DirectionalLight {
-    fn direction(&self, hit: Vec3) -> Vec3 {
+    fn direction(&self, hit: Vec3, normal: Vec3) -> Vec3 {
         self.direction
+    }
+
+    fn dist_to(&self, point: Vec3) -> f64 {
+        f64::INFINITY
+    }
+
+    fn color(&self, position: Vec3, normal: Vec3) -> Color {
+        self.color
+    }
+}
+
+pub struct AmbientLight {
+    color: Color,
+}
+
+impl AmbientLight {
+    pub fn new(color: Color, brightness: f64) -> Self {
+        Self {
+            color: color * brightness,
+        }
+    }
+}
+
+impl Light for AmbientLight {
+    fn direction(&self, hit: Vec3, normal: Vec3) -> Vec3 {
+        normal
     }
 
     fn dist_to(&self, point: Vec3) -> f64 {
@@ -61,7 +87,7 @@ impl PointLight {
 }
 
 impl Light for PointLight {
-    fn direction(&self, hit: Vec3) -> Vec3 {
+    fn direction(&self, hit: Vec3, normal: Vec3) -> Vec3 {
         (self.point - hit).normalize()
     }
 

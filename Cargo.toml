@@ -2,9 +2,15 @@
 name = "raytracer"
 version = "0.1.0"
 edition = "2021"
+resolver = "2"
 
 [dependencies]
 image = "*"
+
+[build-dependencies]
+anyhow = "1.0"
+fs_extra = "1.2"
+glob = "0.3"
 
 [[example]]
 name = "01planes"
@@ -26,3 +32,6 @@ name = "06specular"
 
 [[example]]
 name = "07reflection"
+
+[[example]]
+name = "08background"

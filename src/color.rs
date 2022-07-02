@@ -70,6 +70,16 @@ impl From<[u8; 3]> for Color {
     }
 }
 
+impl From<[u8; 4]> for Color {
+    fn from(color: [u8; 4]) -> Self {
+        Self::new(
+            color[0] as f64 / 255.0,
+            color[1] as f64 / 255.0,
+            color[2] as f64 / 255.0,
+        )
+    }
+}
+
 impl Into<[u8; 3]> for Color {
     fn into(self) -> [u8; 3] {
         [(self.r * 255.0) as u8, (self.g * 255.0) as u8, (self.b * 255.0) as u8]

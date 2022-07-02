@@ -6,7 +6,7 @@ pub trait Surface {
 
     fn hit(&self, ray: &Ray, scene: &Scene, lights: Option<&SceneLights>, bounce_count: usize, min_distance: f64) -> Option<HitInfo> {
         if let Some(hit) = self.surface_hit(ray, min_distance) {
-            if (hit - ray.origin).mag() < min_distance {
+            if (hit - ray.origin).mag() <= min_distance {
                 return self.get_material().calc_mat(ray, hit, self.get_normal(&hit), scene, lights, bounce_count)
             }
         }

@@ -28,7 +28,7 @@ impl Material for AlbedoMaterial {
         if let Some(lights) = lights {
             let mut color = self.color;
             for light in lights {
-                let dir = light.direction(hit_position);
+                let dir = light.direction(hit_position, hit_normal);
 
                 if self.trace_shadow(
                     &Ray::new(hit_position, dir), scene, light.dist_to(hit_position)
@@ -62,7 +62,7 @@ impl Material for DiffuseMaterial {
 
         if let Some(lights) = lights {
             for light in lights {
-                let dir = light.direction(hit_position);
+                let dir = light.direction(hit_position, hit_normal);
 
                 let normal_dot_light = hit_normal * dir;
 
@@ -110,7 +110,7 @@ impl Material for SDMaterial {
 
         if let Some(lights) = lights {
             for light in lights {
-                let dir = light.direction(hit_position);
+                let dir = light.direction(hit_position, hit_normal);
 
                 let normal_dot_light = hit_normal * dir;
 
@@ -166,7 +166,7 @@ impl Material for SDRMaterial {
 
         if let Some(lights) = lights {
             for light in lights {
-                let dir = light.direction(hit_position);
+                let dir = light.direction(hit_position, hit_normal);
 
                 let normal_dot_light = hit_normal * dir;
 
@@ -190,10 +190,12 @@ impl Material for SDRMaterial {
         let reflection_ray = Ray::new(hit_position, reflection_dir);
         let mut min_distance = f64::INFINITY;
         let mut result: Color = 0.into();
-        for surface in scene {
-            if let Some(info) = surface.hit(&reflection_ray, scene, lights, bounce_count, min_distance) {
-                min_distance = (info.position - hit_position).mag();
-                result = info.color();
+        if bounce_count > 0 {
+            for surface in scene {
+                if let Some(info) = surface.hit(&reflection_ray, scene, lights, bounce_count-1, min_distance) {
+                    min_distance = (info.position - hit_position).mag();
+                    result = info.color();
+                }
             }
         }
 
