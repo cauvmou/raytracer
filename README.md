@@ -1,17 +1,17 @@
 # Rust Raytracer
 
-This is a example project of a raytracer written in rust.
-I've included 8 examples, that showcase development, step by step.
+This is an example project of a raytracer written in Rust.
+I've included 8 examples that showcase development, step by step.
 
-The algorithms come from a example raytracer that was written in [Processing4](https://processing.org/) (= A java framework for creative programming).
-This example raytracer was written by one of my professors at [HTL Rennweg](https://www.htlrennweg.at/).
+The algorithms come from an example raytracer that was written in [Processing4](https://processing.org/) (= A Java framework for creative programming).
+It was written by one of my professors at [HTL Rennweg](https://www.htlrennweg.at/).
 
-Although because it was originally written in Java I had to rework how the rendering was going to take place.
+Because it was originally written in Java, I had to rework how the rendering was going to take place since I'm Rust.
 I additionally added some new features such as HDRI sampling for the background.
 
 ## Examples
 
-To run a example you have to have the [RUST](https://www.rust-lang.org/learn/get-started) programming language install, visit it's website in order to find instructions on how to download it.
+To run an example you have to have the [Rust](https://www.rust-lang.org/learn/get-started) programming language installed, visit it's website in order to find instructions on how to download and install it.
 After that you just have to run:
 ```
 cargo run --release --example <EXAMPLE>
