@@ -30,7 +30,7 @@ impl Surface for Plane {
         None
     }
 
-    fn get_normal(&self, hit: &Vec3) -> Vec3 {
+    fn get_normal(&self, _hit: &Vec3) -> Vec3 {
         self.normal
     }
 

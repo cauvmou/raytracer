@@ -24,7 +24,7 @@ impl AlbedoMaterial {
 }
 
 impl Material for AlbedoMaterial {
-    fn calc_mat(&self, prev_ray: &Ray, hit_position: Vec3, hit_normal: Vec3, scene: &Scene, lights: Option<&SceneLights>, bounce_count: usize) -> Option<HitInfo> {
+    fn calc_mat(&self, _prev_ray: &Ray, hit_position: Vec3, hit_normal: Vec3, scene: &Scene, lights: Option<&SceneLights>, _bounce_count: usize) -> Option<HitInfo> {
         if let Some(lights) = lights {
             let mut color = self.color;
             for light in lights {
@@ -57,7 +57,7 @@ impl DiffuseMaterial {
 }
 
 impl Material for DiffuseMaterial {
-    fn calc_mat(&self, prev_ray: &Ray, hit_position: Vec3, hit_normal: Vec3, scene: &Scene, lights: Option<&SceneLights>, bounce_count: usize) -> Option<HitInfo> {
+    fn calc_mat(&self, _prev_ray: &Ray, hit_position: Vec3, hit_normal: Vec3, scene: &Scene, lights: Option<&SceneLights>, _bounce_count: usize) -> Option<HitInfo> {
         let mut color: Color = 0.into();
 
         if let Some(lights) = lights {
@@ -100,7 +100,7 @@ impl SDMaterial {
 }
 
 impl Material for SDMaterial {
-    fn calc_mat(&self, prev_ray: &Ray, hit_position: Vec3, hit_normal: Vec3, scene: &Scene, lights: Option<&SceneLights>, bounce_count: usize) -> Option<HitInfo> {
+    fn calc_mat(&self, prev_ray: &Ray, hit_position: Vec3, hit_normal: Vec3, scene: &Scene, lights: Option<&SceneLights>, _bounce_count: usize) -> Option<HitInfo> {
         let mut color: Color = [0, 0, 0].into();
 
         let mut reflection_dir = hit_normal;

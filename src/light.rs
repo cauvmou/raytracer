@@ -26,41 +26,15 @@ impl DirectionalLight {
 }
 
 impl Light for DirectionalLight {
-    fn direction(&self, hit: Vec3, normal: Vec3) -> Vec3 {
+    fn direction(&self, _hit: Vec3, _normal: Vec3) -> Vec3 {
         self.direction
     }
 
-    fn dist_to(&self, point: Vec3) -> f64 {
+    fn dist_to(&self, _point: Vec3) -> f64 {
         f64::INFINITY
     }
 
-    fn color(&self, position: Vec3, normal: Vec3) -> Color {
-        self.color
-    }
-}
-
-pub struct AmbientLight {
-    color: Color,
-}
-
-impl AmbientLight {
-    pub fn new(color: Color, brightness: f64) -> Self {
-        Self {
-            color: color * brightness,
-        }
-    }
-}
-
-impl Light for AmbientLight {
-    fn direction(&self, hit: Vec3, normal: Vec3) -> Vec3 {
-        normal
-    }
-
-    fn dist_to(&self, point: Vec3) -> f64 {
-        f64::INFINITY
-    }
-
-    fn color(&self, position: Vec3, normal: Vec3) -> Color {
+    fn color(&self, _position: Vec3, _normal: Vec3) -> Color {
         self.color
     }
 }
@@ -87,7 +61,7 @@ impl PointLight {
 }
 
 impl Light for PointLight {
-    fn direction(&self, hit: Vec3, normal: Vec3) -> Vec3 {
+    fn direction(&self, hit: Vec3, _normal: Vec3) -> Vec3 {
         (self.point - hit).normalize()
     }
 
@@ -95,7 +69,7 @@ impl Light for PointLight {
         (self.point - point).mag()
     }
 
-    fn color(&self, position: Vec3, normal: Vec3) -> Color {
+    fn color(&self, position: Vec3, _normal: Vec3) -> Color {
         if self.falloff {
             self.color * (1.0 / (self.point - position).mag2())
         } else {

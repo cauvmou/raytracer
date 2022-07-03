@@ -39,16 +39,13 @@ impl Background {
 
         let x = (self.width as f64 * u) as u32;
         let y = (self.height as f64 * v) as u32;
-        let (r, g) = ((255.0 * u) as u8, (255.0 * v) as u8);
-        //println!("u: {}, v: {}", u, v);
 
         self.image.get_pixel(x, y).0.into()
-        //[r, g, 0].into()
     }
 }
 
 impl Material for Background {
-    fn calc_mat(&self, prev_ray: &crate::math::Ray, hit_position: Vec3, hit_normal: Vec3, scene: &crate::surface::Scene, lights: Option<&crate::light::SceneLights>, bounce_count: usize) -> Option<crate::surface::HitInfo> {
+    fn calc_mat(&self, _prev_ray: &crate::math::Ray, _hit_position: Vec3, hit_normal: Vec3, _scene: &crate::surface::Scene, _lights: Option<&crate::light::SceneLights>, _bounce_count: usize) -> Option<crate::surface::HitInfo> {
         let color = self.sample(hit_normal);
         Some(HitInfo::new(hit_normal*f64::INFINITY, hit_normal).tint(color))
     }
@@ -70,7 +67,7 @@ impl Surface for BackgroundSurface {
         None
     }
 
-    fn shadow_hit(&self, ray: &crate::math::Ray, light_dist: f64) -> bool {
+    fn shadow_hit(&self, _ray: &crate::math::Ray, _light_dist: f64) -> bool {
         false
     }
 }

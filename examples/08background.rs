@@ -1,8 +1,8 @@
-use raytracer::{camera::{Camera, Screen}, surface::Scene, meshes::{Plane, Sphere}, materials::{SDMaterial, SDRMaterial}, light::{SceneLights, DirectionalLight, PointLight, AmbientLight}, background::BackgroundSurface};
+use raytracer::{camera::{Camera, Screen}, surface::Scene, meshes::{Plane, Sphere}, materials::{SDRMaterial}, light::{SceneLights, PointLight}, background::BackgroundSurface};
 
 fn main() {
     let camera = Camera::new(
-        (12.0, 6.0, 16.0).into(),
+        (12.0, 12.0, 16.0).into(),
         (0.0, 0.0, 0.0).into(),
         10.0,
         (0.0, 1.0, 0.0).into()
@@ -47,5 +47,5 @@ fn main() {
     let mut screen = Screen::new(1920, 1080, 16.0, 9.0);
 
     screen = camera.render_scene(&scene, Some(&lights), screen);
-    screen.export("./out.png").expect("Failed to save image.");
+    screen.export("./08out.png").expect("Failed to save image.");
 }
