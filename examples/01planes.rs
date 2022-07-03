@@ -25,5 +25,5 @@ fn main() {
     let mut screen = Screen::new(640, 480, 4.0, 3.0);
 
     screen = camera.render_scene(&scene, None, screen);
-    screen.export("./01out.png").expect("Failed to save image.");
+    screen.export("./out/01out.png").expect("Failed to save image.");
 }

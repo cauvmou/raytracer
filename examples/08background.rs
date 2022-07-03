@@ -47,5 +47,5 @@ fn main() {
     let mut screen = Screen::new(1920, 1080, 16.0, 9.0);
 
     screen = camera.render_scene(&scene, Some(&lights), screen);
-    screen.export("./08out.png").expect("Failed to save image.");
+    screen.export("./out/08out.png").expect("Failed to save image.");
 }

@@ -21,46 +21,46 @@ Replace `<EXAMPLE>` with one of the examples listed in the [Cargo.toml](Cargo.to
 ```
 cargo run --release --example 01planes
 ```
-![Example Image](01out.png)
+![Example Image](out/01out.png)
 
 ### 02spheres
 ```
 cargo run --release --example 02spheres
 ```
-![Example Image](02out.png)
+![Example Image](out/02out.png)
 
 ### 03lights
 ```
 cargo run --release --example 03lights
 ```
-![Example Image](03out.png)
+![Example Image](out/03out.png)
 
 ### 04pointlights
 ```
 cargo run --release --example 04pointlights
 ```
-![Example Image](04out.png)
+![Example Image](out/04out.png)
 
 ### 05diffuse
 ```
 cargo run --release --example 05diffuse
 ```
-![Example Image](05out.png)
+![Example Image](out/05out.png)
 
 ### 06specular
 ```
 cargo run --release --example 06specular
 ```
-![Example Image](06out.png)
+![Example Image](out/06out.png)
 
 ### 07reflection
 ```
 cargo run --release --example 07reflection
 ```
-![Example Image](07out.png)
+![Example Image](out/07out.png)
 
 ### 08background
 ```
 cargo run --release --example 08background
 ```
-![Example Image](08out.png)
+![Example Image](out/08out.png)
