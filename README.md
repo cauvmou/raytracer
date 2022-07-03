@@ -6,7 +6,7 @@ I've included 8 examples that showcase development, step by step.
 The algorithms come from an example raytracer that was written in [Processing4](https://processing.org/) (= A Java framework for creative programming).
 It was written by one of my professors at [HTL Rennweg](https://www.htlrennweg.at/).
 
-Because it was originally written in Java, I had to rework how the rendering was going to take place since I'm Rust.
+Because it was originally written in Java, I had to rework how the rendering was going to take place since I'm using Rust.
 I additionally added some new features such as HDRI sampling for the background.
 
 ## Examples
