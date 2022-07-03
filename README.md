@@ -3,10 +3,11 @@
 This is a example project of a raytracer written in rust.
 I've included 8 examples, that showcase development, step by step.
 
-The algorithms come from a example raytracer that was written using [Processing4](https://processing.org/) (= A java library for creative programming).
+The algorithms come from a example raytracer that was written in [Processing4](https://processing.org/) (= A java framework for creative programming).
 This example raytracer was written by one of my professors at [HTL Rennweg](https://www.htlrennweg.at/).
 
 Although because it was originally written in Java I had to rework how the rendering was going to take place.
+I additionally added some new features such as HDRI sampling for the background.
 
 ## Examples
 
