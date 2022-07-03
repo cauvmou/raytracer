@@ -11,7 +11,7 @@ I additionally added some new features such as HDRI sampling for the background.
 
 ## Examples
 
-To run a example you have to have the RUST programming language install, visit it's website in order to find instructions on how to download it.
+To run a example you have to have the [RUST](https://www.rust-lang.org/learn/get-started) programming language install, visit it's website in order to find instructions on how to download it.
 After that you just have to run:
 ```
 cargo run --release --example <EXAMPLE>
